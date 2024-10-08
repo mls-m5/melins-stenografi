@@ -89,6 +89,13 @@ let letters = {
             ...createArc(dir.b, dir.a, 15),
         ]
     },
+    j: {
+        p: [
+            ...createArc(dir.a, dir.b, 5),
+            [dir.b, 20],
+            ...createArc(dir.b, dir.a, 15),
+        ]
+    },
 };
 
 function doLetter(letter, callback) {
@@ -104,7 +111,7 @@ function doLetter(letter, callback) {
     }
 }
 
-let text = "he taedaboapa";
+let text = "hej taedaboapa";
 
 function doText(text, setup, end, callback) {
     setup();
