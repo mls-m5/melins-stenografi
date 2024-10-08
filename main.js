@@ -14,7 +14,7 @@ let currentPos = {
 
 /**
  * @returns 
- * @type {Array}
+ * @type {Array.<Number>}
  */
 function createArc(startAngle, endAngle, length) {
     let ret = [];
@@ -26,62 +26,114 @@ function createArc(startAngle, endAngle, length) {
 }
 
 
+/**
+ * typedef {[Number, Number]} NumberPair
+ */
+
+/**
+ * @typedef {Object} Letter
+ * @property {Array.<Array.<NumberPair>>} p
+ */
+
+
+let dir = {
+    a: 20,
+    o: 0,
+    e: 90 - 24,
+    b: -90 - 16,
+    p: 20 + 180,
+}
+
+/** @type Array.<Letter> */
 let letters = {
     a: {
         p: [
-            [20, 20] // 0, Zero is straight right, element 1 is length
+            [dir.a, 20] // 0, Zero is straight right, element 1 is length
         ]
     },
     o: {
         p: [
-            [0, 20]
+            [dir.o, 20]
         ]
     },
     e: {
         p: [
-            [90 - 24, 20]
+            [dir.e, 20]
         ]
     },
     b: {
         p: [
-            [-90 - 16, 20]
+            [dir.b, 20]
         ]
     },
     t: {
         p: [
-            ...createArc(0, -90 - 16, 10),
+            ...createArc(dir.a, dir.b, 10),
         ]
     },
     d: {
         p: [
-            ...createArc(0, -90 - 16, 10),
-            [-90 - 16, 20]
+            ...createArc(dir.a, dir.b, 10),
+            [dir.b, 20]
+        ]
+    },
+    p: {
+        p: [
+            ...createArc(dir.p, dir.b, 10),
+            [dir.b, 20],
+        ]
+    },
+    h: {
+        p: [
+            [dir.b, 20],
+            ...createArc(dir.b, dir.a, 15),
         ]
     },
 };
 
-function drawLetter(letter) {
-    ctx.strokeStyle = "white";
-    ctx.beginPath();
-    ctx.moveTo(currentPos.x, currentPos.y);
-
-
+function doLetter(letter, callback) {
     for (segment of letter.p) {
         let rad = segment[0] / 180 * Math.PI;
         let length = segment[1];
         let sx = Math.cos(rad) * length;
         let sy = -Math.sin(rad) * length;
-        ctx.lineTo(currentPos.x + sx, currentPos.y + sy);
+        // ctx.lineTo(currentPos.x + sx, currentPos.y + sy);
         currentPos.x += sx;
         currentPos.y += sy;
+        callback(currentPos.x, currentPos.y);
     }
-    ctx.stroke();
-    ctx.closePath();
 }
 
-let text = "taedabo";
+let text = "hetaedaboapa";
 
-for (c of text) {
-    let letter = letters[c];
-    drawLetter(letter);
+function doText(text, setup, end, callback) {
+    setup();
+
+    for (c of text) {
+        let letter = letters[c];
+        doLetter(letter, callback);
+    }
+
+    end();
 }
+
+
+function drawText(text) {
+    function end() {
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function setup() {
+        ctx.strokeStyle = "white";
+        ctx.beginPath();
+        ctx.moveTo(currentPos.x, currentPos.y);
+    }
+
+    function callback(x, y) {
+        ctx.lineTo(x, y);
+    }
+    doText(text, setup, end, callback);
+}
+
+drawText(text);
