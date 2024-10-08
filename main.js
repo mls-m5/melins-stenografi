@@ -104,7 +104,7 @@ function doLetter(letter, callback) {
     }
 }
 
-let text = "hetaedaboapa";
+let text = "he taedaboapa";
 
 function doText(text, setup, end, callback) {
     setup();
@@ -133,7 +133,14 @@ function drawText(text) {
     function callback(x, y) {
         ctx.lineTo(x, y);
     }
-    doText(text, setup, end, callback);
+
+    let texts = text.split(" ");
+
+    for (let t of texts) {
+        currentPos.x += 20;
+        currentPos.y = 100;
+        doText(t, setup, end, callback);
+    }
 }
 
 drawText(text);
