@@ -20,7 +20,7 @@ function createArc(startAngle, endAngle, length) {
     let ret = [];
     let steps = 100;
     for (let i = 0; i < 1; i += 1 / steps) {
-        ret.push([startAngle * (i - 1) + endAngle * i, length / steps]);
+        ret.push([startAngle * (1 - i) + endAngle * i, length / steps]);
     }
     return ret;
 }
@@ -48,7 +48,8 @@ let dir = {
 let letters = {
     a: {
         p: [
-            [dir.a, 20] // 0, Zero is straight right, element 1 is length
+            // [dir.a, 20]
+            ...createArc(dir.a, dir.a, 20),
         ]
     },
     o: {
@@ -86,6 +87,13 @@ let letters = {
     h: {
         p: [
             [dir.b, 20],
+            ...createArc(dir.b, dir.a - 360, 15),
+            [dir.a, 8],
+        ]
+    },
+    v: {
+        p: [
+            [dir.b, 20],
             ...createArc(dir.b, dir.a, 15),
         ]
     },
@@ -93,10 +101,19 @@ let letters = {
         p: [
             ...createArc(dir.a, dir.b, 5),
             [dir.b, 20],
-            ...createArc(dir.b, dir.a, 15),
+            ...createArc(dir.b, dir.a - 360, 15),
+            [dir.a, 8],
+        ]
+    },
+    m: {
+        p: [
+            ...createArc(dir.a, dir.a - 200, 10),
+            ...createArc(dir.a - 200, dir.a, 10),
         ]
     },
 };
+
+let text = "hej ma taedaboapa";
 
 function doLetter(letter, callback) {
     for (segment of letter.p) {
@@ -105,13 +122,12 @@ function doLetter(letter, callback) {
         let sx = Math.cos(rad) * length;
         let sy = -Math.sin(rad) * length;
         // ctx.lineTo(currentPos.x + sx, currentPos.y + sy);
-        currentPos.x += sx;
-        currentPos.y += sy;
+        currentPos.x += sx * 5;
+        currentPos.y += sy * 5;
         callback(currentPos.x, currentPos.y);
     }
 }
 
-let text = "hej taedaboapa";
 
 function doText(text, setup, end, callback) {
     setup();
